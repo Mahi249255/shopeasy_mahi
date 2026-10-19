@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Login</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">ShopEasy 🛍️</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="cart.html">Cart</a>
+            <a href="admin.html">Admin</a>
+            <a href="login.html" class="active">Login</a>
+        </nav>
+    </header>
+
+    <main class="container" style="max-width: 400px; margin-top: 5rem;">
+        <h2>Login to ShopEasy</h2>
+        <form id="login-form" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <div style="margin-bottom: 15px;">
+                <label>Email Address</label><br>
+                <input type="email" id="email" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Password</label><br>
+                <input type="password" id="password" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <button type="submit" class="btn" style="width: 100%;">Login</button>
+            <p style="margin-top: 15px; text-align: center;">Don't have an account? <a href="register.html">Register here</a></p>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("http://localhost:5000/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    // Save JWT token and user info to localStorage
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    alert("Login successful!");
+                    window.location.href = "index.html";
+                } else {
+                    alert(data.error || "Login failed.");
+                }
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Network error during login.");
+            }
+        });
+    </script>
+</body>
+</html>

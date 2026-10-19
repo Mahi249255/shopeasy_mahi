@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Home</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header class="navbar">
+        <div class="logo">ShopEasy 🛍️</div>
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="cart.html">Cart</a>
+            <a href="orders.html">My Orders</a>
+            <a href="admin.html">Admin</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1>Featured Products</h1>
+        
+        <!-- Search and Filter Bar (PRD-2, PRD-3) -->
+        <div class="filter-bar">
+            <input type="text" id="search-input" placeholder="Search products..." onkeyup="filterProducts()">
+        </div>
+
+        <!-- Dynamic Product Grid (PRD-1) -->
+        <div id="product-grid" class="product-grid">
+            <p>Loading products...</p>
+        </div>
+    </main>
+
+    <script src="./js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Register</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">ShopEasy 🛍️</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="cart.html">Cart</a>
+            <a href="admin.html">Admin</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <main class="container" style="max-width: 400px; margin-top: 5rem;">
+        <h2>Create an Account</h2>
+        <form id="register-form" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <div style="margin-bottom: 15px;">
+                <label>Full Name</label><br>
+                <input type="text" id="name" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Email Address</label><br>
+                <input type="email" id="email" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Password (min 6 chars)</label><br>
+                <input type="password" id="password" required minlength="6" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Phone Number</label><br>
+                <input type="text" id="phone" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Address</label><br>
+                <textarea id="address" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+            </div>
+            <button type="submit" class="btn" style="width: 100%;">Register</button>
+            <p style="margin-top: 15px; text-align: center;">Already have an account? <a href="login.html">Login here</a></p>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById("register-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const phone = document.getElementById("phone").value;
+            const address = document.getElementById("address").value;
+
+            try {
+                const response = await fetch("http://localhost:5000/api/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password, phone, address })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Registration successful! Please login.");
+                    window.location.href = "login.html";
+                } else {
+                    alert(data.error || "Registration failed.");
+                }
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Network error during registration.");
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Admin Dashboard</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">ShopEasy 🛍️ [Admin]</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="cart.html">Cart</a>
+            <a href="orders.html">My Orders</a>
+            <a href="admin.html" class="active">Admin Dashboard</a>
+            <a href="login.html" id="auth-link">Logout</a>
+        </nav>
+    </header>
+
+    <main class="container" style="max-width: 600px; margin-top: 3rem;">
+        <h1>Admin Dashboard - Add Product</h1>
+        
+        <div id="admin-content" style="display: none;">
+            <form id="add-product-form" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <div style="margin-bottom: 15px;">
+                    <label>Product Name</label><br>
+                    <input type="text" id="name" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Category ID (1: Electronics, 2: Apparel, 3: Home & Kitchen)</label><br>
+                    <input type="number" id="category_id" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Description</label><br>
+                    <textarea id="description" rows="3" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Price (in paise, e.g., 99900 for ₹999.00)</label><br>
+                    <input type="number" id="price" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Stock Quantity</label><br>
+                    <input type="number" id="stock" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Image URL</label><br>
+                    <input type="text" id="image_url" placeholder="https://via.placeholder.com/300" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Add Product</button>
+            </form>
+        </div>
+
+        <div id="unauthorized-msg" style="display: none; text-align: center; margin-top: 3rem;">
+            <h2>Access Denied 🚫</h2>
+            <p>You must be logged in as an <b>Admin</b> to view this page.</p>
+            <a href="login.html" class="btn" style="display: inline-block; margin-top: 10px; text-decoration: none;">Login as Admin</a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const userStr = localStorage.getItem("user");
+            const token = localStorage.getItem("token");
+
+            if (token && userStr) {
+                const user = JSON.parse(userStr);
+                if (user.role === 'admin') {
+                    document.getElementById("admin-content").style.display = "block";
+                } else {
+                    document.getElementById("unauthorized-msg").style.display = "block";
+                }
+            } else {
+                document.getElementById("unauthorized-msg").style.display = "block";
+            }
+        });
+
+        document.getElementById("add-product-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem("token");
+
+            const name = document.getElementById("name").value;
+            const category_id = parseInt(document.getElementById("category_id").value);
+            const description = document.getElementById("description").value;
+            const price = parseInt(document.getElementById("price").value);
+            const stock = parseInt(document.getElementById("stock").value);
+            const image_url = document.getElementById("image_url").value;
+
+            try {
+                const response = await fetch("http://localhost:5000/api/products", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ category_id, name, description, price, stock, image_url })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Product added successfully!");
+                    document.getElementById("add-product-form").reset();
+                } else {
+                    alert(data.error || "Failed to add product.");
+                }
+            } catch (error) {
+                console.error("Error adding product:", error);
+                alert("Network error while adding product.");
+            }
+        });
+
+        // Logout handler
+        document.getElementById("auth-link").addEventListener("click", (e) => {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            alert("Logged out successfully.");
+            window.location.href = "login.html";
+        });
+    </script>
+</body>
+</html>
